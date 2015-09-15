@@ -165,7 +165,7 @@ public class AreaGrafica extends JInternalFrame {
             for (Object entidade1 : entidades) {
                 JMenuItem jmi = new JMenuItem(((mxCell)entidade1).getValue().toString());
                 jmi.addActionListener(new BotaoTotalidadePopupMenu());
-                menuParcialidade.add(jmi);
+                menu1n.add(jmi);
 //                menuParcialidade.addActionListener(new BotaoDeletarPopupMenu());
 //                menuTotalidade.add( ((mxCell)entidade1).getValue().toString() );
 //                menuTotalidade.addActionListener(new BotaoDeletarPopupMenu());
@@ -187,7 +187,7 @@ public class AreaGrafica extends JInternalFrame {
     public class BotaoTotalidadePopupMenu implements ActionListener {
         @Override
 	public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(null,((mxCell) cell).getEdgeCount());
+            JOptionPane.showMessageDialog(null, ((mxCell) cell).getEdgeAt(0).getValue().toString());
 	}
     }
     
