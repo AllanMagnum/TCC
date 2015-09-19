@@ -6,11 +6,11 @@
 
 package br.com.concepter.view;
 
-import br.com.concepter.model.Agregacao;
-import br.com.concepter.model.Atributo;
-import br.com.concepter.model.Especializacao;
-import br.com.concepter.model.Entidade;
-import br.com.concepter.model.Relacionamento;
+import br.com.concepter.model.beans.Agregacao;
+import br.com.concepter.model.beans.Atributo;
+import br.com.concepter.model.beans.Especializacao;
+import br.com.concepter.model.beans.Entidade;
+import br.com.concepter.model.beans.Relacionamento;
 import br.com.concepter.model.enuns.TipoAtributoEnum;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
@@ -269,7 +269,7 @@ public class AreaGrafica extends JInternalFrame {
                     }
                     
                     if(atributoSelecionado != null){
-                        if(atributoSelecionado.getTipoAtributo().equals(TipoAtributoEnum.composto) || atributoSelecionado.getTipoAtributo().equals(TipoAtributoEnum.multivalorado)){
+                        if(atributoSelecionado.getTipoAtributo().equals(TipoAtributoEnum.COMPOSTO) || atributoSelecionado.getTipoAtributo().equals(TipoAtributoEnum.MULTIVALORADO)){
                             isAtributo = true;
                         }
                     }
@@ -283,8 +283,9 @@ public class AreaGrafica extends JInternalFrame {
                                                       cont_entidade ,
                                                       "Entidade" + cont_entidade,
                                                       px,
-                                                      py);
-                    entidade.add(TelaPrincipal.getTipoEntidade());
+                                                      py,
+                                                      TelaPrincipal.getTipoEntidade());
+                    entidade.add();
                     TelaPrincipal.setTipoEntidade();
                     TelaPrincipal.setBotao(0);
                     px = 0;
@@ -306,7 +307,7 @@ public class AreaGrafica extends JInternalFrame {
                         if(isEntidade){
                             int cont = 0;
                             for (Atributo atrib : entidadeSelecionado.getAtributos() ) {
-                                if(atrib.getTipoAtributo() == TipoAtributoEnum.chave){
+                                if(atrib.getTipoAtributo() == TipoAtributoEnum.CHAVE){
                                     cont++;
                                 }
                                 if(cont == 3){
@@ -326,7 +327,7 @@ public class AreaGrafica extends JInternalFrame {
                         if(isEntidade){
                             int cont = 0;
                             for (Atributo atrib : entidadeSelecionado.getAtributos() ) {
-                                if(atrib.getTipoAtributo() == TipoAtributoEnum.chave){
+                                if(atrib.getTipoAtributo() == TipoAtributoEnum.CHAVE){
                                     cont++;
                                 }
                                 if(cont == 3){
@@ -346,7 +347,7 @@ public class AreaGrafica extends JInternalFrame {
                         if(isAgregacao){
                             int cont = 0;
                             for (Atributo atrib : agregacaoSelecionado.getAtributos() ) {
-                                if(atrib.getTipoAtributo() == TipoAtributoEnum.chave){
+                                if(atrib.getTipoAtributo() == TipoAtributoEnum.CHAVE){
                                     cont++;
                                 }
                                 if(cont == 3){

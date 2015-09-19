@@ -1,4 +1,4 @@
-package br.com.concepter.model;
+package br.com.concepter.model.beans;
 
 import br.com.concepter.model.enuns.TipoAtributoEnum;
 import com.mxgraph.model.mxCell;
@@ -11,7 +11,6 @@ import java.util.Properties;
 public class Atributo {
 
     private String nome;
-    protected Properties display;
     private mxGraph grafico; 
     private Entidade entidade;
     private Atributo atributo;
@@ -90,22 +89,23 @@ public class Atributo {
         this.agregacao = agregacao;
     }
     
-    public void add(Object entidade ){
+    public void add(Object objeto){
         String caracteristicas = "";
-        if(tipoAtributo.toString() == "simples"){
+       
+        if(tipoAtributo == TipoAtributoEnum.SIMPLES){
             caracteristicas = "shape=ellipse;";
         }
-        if(tipoAtributo.toString() == "multivalorado"){
-            caracteristicas = "shape=doubleEllipse;";
-        }
-        if(tipoAtributo.toString() == "derivado"){
-            caracteristicas = "shape=ellipse;dashed=true;";
-        }
-        if(tipoAtributo.toString() == "chave"){
+        if(tipoAtributo == TipoAtributoEnum.CHAVE){
             caracteristicas = "shape=ellipse;fontStyle=1";
         }
-        if(tipoAtributo.toString() == "composto"){
+        if(tipoAtributo == TipoAtributoEnum.COMPOSTO){
             caracteristicas = "shape=ellipse;";
+        }
+        if(tipoAtributo == TipoAtributoEnum.MULTIVALORADO){
+            caracteristicas = "shape=doubleEllipse;";
+        }
+        if(tipoAtributo == TipoAtributoEnum.DERIVADO){
+            caracteristicas = "shape=ellipse;dashed=true;";
         }
 
         this.grafico.getModel().beginUpdate();
@@ -114,23 +114,23 @@ public class Atributo {
         Object atributo_2 = null;
         Object parent = this.grafico.getDefaultParent();
         try{
-            double posx = ((mxCell) entidade).getGeometry().getX();
-            double posy = ((mxCell) entidade).getGeometry().getY();
+            double posx = ((mxCell) objeto).getGeometry().getX();
+            double posy = ((mxCell) objeto).getGeometry().getY();
 
             atributo = this.grafico.insertVertex(parent, null, this.nome +  this.cont_Atributo, posx, posy - 50, this.tamanhoLargura, this.tamanhoAltura, caracteristicas);
-
+            
             this.grafico.insertEdge(parent, null, null, atributo, entidade,"startArrow=none;endArrow=none;");
 
             if("composto".equals(tipoAtributo.toString())){
                 this.cont_Atributo++;
                 atributo_1 = this.grafico.insertVertex(parent, null, "Atributo" + this.cont_Atributo, this.pX - 55, this.pY - 50, this.tamanhoLargura, this.tamanhoAltura, "shape=ellipse;rounded=true;");
-                Atributo atr_1 = new Atributo(this.grafico, this.mapaGraficoAtributos, TipoAtributoEnum.simples, "Atributo" + this.cont_Atributo, this.pX, this.pY, cont_Atributo);
+                Atributo atr_1 = new Atributo(this.grafico, this.mapaGraficoAtributos, TipoAtributoEnum.SIMPLES, "Atributo" + this.cont_Atributo, this.pX, this.pY, cont_Atributo);
                 atr_1.setForma((mxCell) atributo_1);
                 this.mapaGraficoAtributos.put( Integer.valueOf( ((mxCell) atributo_1).getId() ), atr_1 );
                 
                 this.cont_Atributo++;
                 atributo_2 = this.grafico.insertVertex(parent, null, "Atributo" + this.cont_Atributo, this.pX + 55, this.pY - 50, this.tamanhoLargura, this.tamanhoAltura, "shape=ellipse;rounded=true;");
-                Atributo atr_2 = new Atributo(this.grafico, this.mapaGraficoAtributos, TipoAtributoEnum.simples, "Atributo" + this.cont_Atributo, this.pX, this.pY, cont_Atributo);
+                Atributo atr_2 = new Atributo(this.grafico, this.mapaGraficoAtributos, TipoAtributoEnum.SIMPLES, "Atributo" + this.cont_Atributo, this.pX, this.pY, cont_Atributo);
                 atr_2.setForma((mxCell) atributo_2);
                 this.mapaGraficoAtributos.put( Integer.valueOf( ((mxCell) atributo_2).getId() ), atr_2 );
                 

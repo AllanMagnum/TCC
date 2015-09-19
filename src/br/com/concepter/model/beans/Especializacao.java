@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package br.com.concepter.model;
+package br.com.concepter.model.beans;
 
 import br.com.concepter.model.enuns.TipoEspecializacaoEnum;
 import com.mxgraph.view.mxGraph;
@@ -44,10 +44,10 @@ public class Especializacao {
 	
 	public void add(Object entidade){
             
-            if(tipoEspecializacao.toString() == "disjuncao"){
+            if(tipoEspecializacao == TipoEspecializacaoEnum.DISJUNCAO){
                 nome = "d";
             }
-            if(tipoEspecializacao.toString() == "sobreposicao"){
+            if(tipoEspecializacao == TipoEspecializacaoEnum.SOBREPOSICAO){
                 nome = "o";
             }
                 

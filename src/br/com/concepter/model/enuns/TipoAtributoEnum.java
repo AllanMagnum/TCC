@@ -11,5 +11,5 @@ package br.com.concepter.model.enuns;
  * @author AllanMagnum
  */
 public enum TipoAtributoEnum {
-    simples, composto, multivalorado, derivado, chave;
+    SIMPLES, COMPOSTO, MULTIVALORADO, DERIVADO, CHAVE;
 }

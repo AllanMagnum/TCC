@@ -1,4 +1,4 @@
-package br.com.concepter.model;
+package br.com.concepter.model.beans;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.view.mxGraph;

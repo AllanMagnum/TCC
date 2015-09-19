@@ -466,7 +466,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
    
     private void jButtonEntidadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEntidadeActionPerformed
         botao = 1; 
-        tipoEntidade = tipoEntidade.forte;
+        tipoEntidade = tipoEntidade.FORTE;
     }//GEN-LAST:event_jButtonEntidadeActionPerformed
 
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
@@ -475,7 +475,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     private void jButtonAtributoSimplesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAtributoSimplesActionPerformed
         botao = 2;
-        tipoAtributo = tipoAtributo.simples;
+        tipoAtributo = tipoAtributo.SIMPLES;
     }//GEN-LAST:event_jButtonAtributoSimplesActionPerformed
 
     private void jButtonRelacionamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRelacionamentoActionPerformed
@@ -484,22 +484,22 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     private void jButtonAtributoMultivaloradoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAtributoMultivaloradoActionPerformed
         botao = 2;
-        tipoAtributo = tipoAtributo.multivalorado;
+        tipoAtributo = tipoAtributo.MULTIVALORADO;
     }//GEN-LAST:event_jButtonAtributoMultivaloradoActionPerformed
 
     private void jButtonAtributoCompostoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAtributoCompostoActionPerformed
         botao = 2;
-        tipoAtributo = tipoAtributo.composto;
+        tipoAtributo = tipoAtributo.COMPOSTO;
     }//GEN-LAST:event_jButtonAtributoCompostoActionPerformed
 
     private void jButtonAtributoChaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAtributoChaveActionPerformed
         botao = 2;
-        tipoAtributo = tipoAtributo.chave;
+        tipoAtributo = tipoAtributo.CHAVE;
     }//GEN-LAST:event_jButtonAtributoChaveActionPerformed
 
     private void jButtonAtributoDerivadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAtributoDerivadoActionPerformed
         botao = 2;
-        tipoAtributo = tipoAtributo.derivado;
+        tipoAtributo = tipoAtributo.DERIVADO;
     }//GEN-LAST:event_jButtonAtributoDerivadoActionPerformed
 
     private void jButtonRelacionamentoTernarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRelacionamentoTernarioActionPerformed
@@ -508,7 +508,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     private void jButtonEntidadeFracaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEntidadeFracaActionPerformed
         botao = 1;
-        tipoEntidade = tipoEntidade.fraco;
+        tipoEntidade = tipoEntidade.FRACA;
     }//GEN-LAST:event_jButtonEntidadeFracaActionPerformed
 
     private void jButtonRelacionamentoQuaternarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRelacionamentoQuaternarioActionPerformed
@@ -517,12 +517,12 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     private void jButtonEspecializacaoDisjuncaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEspecializacaoDisjuncaoActionPerformed
         botao = 6;
-        tipoEspecializacao = tipoEspecializacao.disjuncao;
+        tipoEspecializacao = tipoEspecializacao.DISJUNCAO;
     }//GEN-LAST:event_jButtonEspecializacaoDisjuncaoActionPerformed
 
     private void jButtonEspecializacaoSobrePosicaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEspecializacaoSobrePosicaoActionPerformed
         botao = 6;
-        tipoEspecializacao = tipoEspecializacao.sobreposicao;
+        tipoEspecializacao = tipoEspecializacao.SOBREPOSICAO;
     }//GEN-LAST:event_jButtonEspecializacaoSobrePosicaoActionPerformed
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed

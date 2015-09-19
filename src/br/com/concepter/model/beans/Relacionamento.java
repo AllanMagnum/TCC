@@ -1,4 +1,4 @@
-package br.com.concepter.model;
+package br.com.concepter.model.beans;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.view.mxGraph;
@@ -47,7 +47,7 @@ public class Relacionamento {
 
                 relacionamento =  this.grafico.insertVertex(parent, null, this.nome, posx + 160, posy, this.tamanhoLargura, this.tamanhoAltura, "shape=rhombus;");
 
-                this.grafico.insertEdge(parent, null, "N-M", entidade_1, relacionamento,"startArrow=none;endArrow=none;strokeColor=red;");
+                this.grafico.insertEdge(parent, null, "N-M", entidade_1, relacionamento,"startArrow=none;endArrow=none;strokeColor=red;edgeStyle=elbowEdgeStyle;elbow=horizontal;orthogonal=0;");
                 this.grafico.insertEdge(parent, null, "N-M", entidade_2, relacionamento,"startArrow=none;endArrow=none;strokeColor=red;");
 
 

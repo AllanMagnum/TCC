@@ -1,4 +1,4 @@
-package br.com.concepter.model;
+package br.com.concepter.model.beans;
 
 import br.com.concepter.model.enuns.TipoEntidadeEnum;
 import com.mxgraph.model.mxCell;
@@ -10,7 +10,7 @@ import java.util.List;
 public class Entidade{
 
     private String nome;
-    private TipoEntidadeEnum tipoEntidade;
+    private TipoEntidadeEnum tipo;
     private List<Object> relacionamentos;
     private List<Atributo> atributos = new ArrayList<>();
     private mxGraph grafico;
@@ -22,9 +22,10 @@ public class Entidade{
     private int tamanhoAltura;
     private Object cell;
 
-    public Entidade(mxGraph grafico, HashMap<Integer, Object> mapaGrafico, Integer cont_entidade, String nome,float pX, float pY){
+    public Entidade(mxGraph grafico, HashMap<Integer, Object> mapaGrafico, Integer cont_entidade, String nome,float pX, float pY, TipoEntidadeEnum tipo){
             this.nome = nome;
-            this.tipoEntidade = tipoEntidade;
+            this.tipo = tipo;
+            this.relacionamentos = new ArrayList<Object>();
             this.grafico = grafico;
             this.cont_entidade = cont_entidade;
             this.mapaGrafico = mapaGrafico;
@@ -32,7 +33,6 @@ public class Entidade{
             this.tamanhoAltura = 50;
             this.pX = pX;
             this.pY = pY;
-            this.relacionamentos = new ArrayList<Object>();
     }
 
     public float getPX(){
@@ -59,16 +59,16 @@ public class Entidade{
         this.atributos = atributos;
     }
 	
-    public void add(TipoEntidadeEnum tipoEntidade){
+    public void add(){
 
             this.grafico.getModel().beginUpdate();
             Object entidade = null;
             Object parent = this.grafico.getDefaultParent();
             String caracteristicas = "";
-            if(tipoEntidade.toString() == "forte"){
+            if(tipo == TipoEntidadeEnum.FORTE){
                 caracteristicas = "fillColor=yellow;shape=rectangle;";
             }
-            if(tipoEntidade.toString() == "fraco"){
+            if(tipo == TipoEntidadeEnum.FRACA){
                 caracteristicas = "fillColor=yellow;shape=doubleRectangle;";
             }
             try{		
