@@ -15,14 +15,14 @@ public class Entidade{
     private List<Atributo> atributos = new ArrayList<>();
     private mxGraph grafico;
     private Integer cont_entidade;
-    private HashMap<Integer, Object> mapaGrafico;
+    private HashMap<Integer, Entidade> mapaGrafico;
     private float pX;
     private float pY;
     private int tamanhoLargura;
     private int tamanhoAltura;
-    private Object cell;
+    private mxCell cell;
 
-    public Entidade(mxGraph grafico, HashMap<Integer, Object> mapaGrafico, Integer cont_entidade, String nome,float pX, float pY, TipoEntidadeEnum tipo){
+    public Entidade(mxGraph grafico, HashMap<Integer, Entidade> mapaGrafico, Integer cont_entidade, String nome,float pX, float pY, TipoEntidadeEnum tipo){
             this.nome = nome;
             this.tipo = tipo;
             this.relacionamentos = new ArrayList<Object>();
@@ -34,7 +34,37 @@ public class Entidade{
             this.pX = pX;
             this.pY = pY;
     }
+	
+    public void add(){
 
+            this.grafico.getModel().beginUpdate();
+            Object entidade = null;
+            Object parent = this.grafico.getDefaultParent();
+            String caracteristicas = "";
+            if(tipo == TipoEntidadeEnum.FORTE){
+                caracteristicas = "fillColor=white;shape=rectangle;";
+            }
+            if(tipo == TipoEntidadeEnum.FRACA){
+                caracteristicas = "fillColor=white;shape=doubleRectangle;";
+            }
+            try{		
+                entidade = this.grafico.insertVertex(parent, 
+                                                     null, 
+                                                     this.nome, 
+                                                     this.pX, 
+                                                     this.pY, 
+                                                     this.tamanhoLargura, 
+                                                     this.tamanhoAltura, 
+                                                     caracteristicas);
+            }
+            finally{
+                    this.cell = (mxCell) entidade;
+                    this.mapaGrafico.put( Integer.valueOf( ((mxCell) entidade).getId() ), this);
+                    this.grafico.getModel().endUpdate();
+            }
+    }
+    
+    
     public float getPX(){
         return this.pX;
     }
@@ -58,34 +88,13 @@ public class Entidade{
     public void setAtributos(List<Atributo> atributos) {
         this.atributos = atributos;
     }
-	
-    public void add(){
 
-            this.grafico.getModel().beginUpdate();
-            Object entidade = null;
-            Object parent = this.grafico.getDefaultParent();
-            String caracteristicas = "";
-            if(tipo == TipoEntidadeEnum.FORTE){
-                caracteristicas = "fillColor=yellow;shape=rectangle;";
-            }
-            if(tipo == TipoEntidadeEnum.FRACA){
-                caracteristicas = "fillColor=yellow;shape=doubleRectangle;";
-            }
-            try{		
-                entidade = this.grafico.insertVertex(parent, 
-                                                     null, 
-                                                     this.nome, 
-                                                     this.pX, 
-                                                     this.pY, 
-                                                     this.tamanhoLargura, 
-                                                     this.tamanhoAltura, 
-                                                     caracteristicas);
-            }
-            finally{
-                    // Updates the display
-                    this.cell = entidade;
-                    this.mapaGrafico.put( Integer.valueOf( ((mxCell) entidade).getId() ), this);
-                    this.grafico.getModel().endUpdate();
-            }
+    public mxCell getCell() {
+        return cell;
     }
+
+    public void setCell(mxCell cell) {
+        this.cell = cell;
+    }
+    
 }

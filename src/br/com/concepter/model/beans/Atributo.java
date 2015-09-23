@@ -17,7 +17,7 @@ public class Atributo {
     private Relacionamento relacionamento;
     private Agregacao agregacao;
     private List<Atributo> atributos = new ArrayList<>();
-    private HashMap<Integer, Object> mapaGraficoAtributos;
+    private HashMap<Integer, Atributo> mapaGraficoAtributos;
     private float pX;
     private float pY;
     private int tamanhoLargura;
@@ -25,8 +25,9 @@ public class Atributo {
     private TipoAtributoEnum tipoAtributo;
     private mxCell forma;
     private Integer cont_Atributo;
+    private boolean isRelacionamento;
 
-    public Atributo(mxGraph grafico, HashMap<Integer, Object> mapaGraficoAtributos, TipoAtributoEnum tipoAtributo, String nome, float pX, float pY, Integer cont_Atributo){
+    public Atributo(mxGraph grafico, HashMap<Integer, Atributo> mapaGraficoAtributos, TipoAtributoEnum tipoAtributo, String nome, float pX, float pY, Integer cont_Atributo){
             this.nome = nome;
             this.grafico = grafico;
             this.mapaGraficoAtributos = mapaGraficoAtributos;
@@ -36,8 +37,82 @@ public class Atributo {
             this.tamanhoAltura = 25;
             this.tipoAtributo = tipoAtributo;
             this.cont_Atributo = cont_Atributo;
-    }
+    } 
+    
+    public void add(Object objeto){
+        String caracteristicas = "";
+       
+        if(tipoAtributo == TipoAtributoEnum.SIMPLES){
+            caracteristicas = "fillColor=white;shape=ellipse;";
+        }
+        if(tipoAtributo == TipoAtributoEnum.CHAVE){
+            caracteristicas = "fillColor=white;shape=ellipse;fontStyle=1";
+        }
+        if(tipoAtributo == TipoAtributoEnum.COMPOSTO){
+            caracteristicas = "fillColor=white;shape=ellipse;";
+        }
+        if(tipoAtributo == TipoAtributoEnum.MULTIVALORADO){
+            caracteristicas = "fillColor=white;shape=doubleEllipse;";
+        }
+        if(tipoAtributo == TipoAtributoEnum.DERIVADO){
+            caracteristicas = "fillColor=white;shape=ellipse;dashed=true;";
+        }
 
+        this.grafico.getModel().beginUpdate();
+        Object atributo = null;
+        Object atributo_1 = null;
+        Object atributo_2 = null;
+        Object parent = this.grafico.getDefaultParent();
+        try{
+            
+            double posx = ((mxCell) objeto).getGeometry().getX();
+            double posy = ((mxCell) objeto).getGeometry().getY();
+
+            if(this.isRelacionamento){
+                posx = posx + 40;
+                posy = posy + 120;
+            }
+            
+            atributo = this.grafico.insertVertex(parent, null, this.nome +  this.cont_Atributo, posx, posy - 50, this.tamanhoLargura, this.tamanhoAltura, caracteristicas);
+            
+            this.grafico.insertEdge(parent, null, null, atributo, objeto,"startArrow=none;endArrow=none;");
+
+            if(tipoAtributo == TipoAtributoEnum.COMPOSTO){
+                this.cont_Atributo++;
+                atributo_1 = this.grafico.insertVertex(parent, null, "Atributo" + this.cont_Atributo, this.pX - 55, this.pY - 50, this.tamanhoLargura, this.tamanhoAltura, "fillColor=white;shape=ellipse;rounded=true;");
+                Atributo atr_1 = new Atributo(this.grafico, this.mapaGraficoAtributos, TipoAtributoEnum.SIMPLES, "Atributo" + this.cont_Atributo, this.pX, this.pY, cont_Atributo);
+                atr_1.setForma((mxCell) atributo_1);
+                this.mapaGraficoAtributos.put( Integer.valueOf( ((mxCell) atributo_1).getId() ), atr_1 );
+                
+                this.cont_Atributo++;
+                atributo_2 = this.grafico.insertVertex(parent, null, "Atributo" + this.cont_Atributo, this.pX + 55, this.pY - 50, this.tamanhoLargura, this.tamanhoAltura, "fillColor=white;shape=ellipse;rounded=true;");
+                Atributo atr_2 = new Atributo(this.grafico, this.mapaGraficoAtributos, TipoAtributoEnum.SIMPLES, "Atributo" + this.cont_Atributo, this.pX, this.pY, cont_Atributo);
+                atr_2.setForma((mxCell) atributo_2);
+                this.mapaGraficoAtributos.put( Integer.valueOf( ((mxCell) atributo_2).getId() ), atr_2 );
+                
+                this.grafico.insertEdge(parent, null, null, atributo_1, atributo,"startArrow=none;endArrow=none;");
+                this.grafico.insertEdge(parent, null, null, atributo_2, atributo,"startArrow=none;endArrow=none;");
+            }
+        }
+        finally{
+            if(this.entidade != null){
+                this.entidade.getAtributos().add(this);
+            }
+            
+            if(this.relacionamento != null){
+                this.relacionamento.getAtributos().add(this);
+            }
+            
+            if(this.atributo != null){
+                this.atributo.getAtributos().add(this);
+            } 
+            
+            this.forma = (mxCell) atributo;
+            this.mapaGraficoAtributos.put( Integer.valueOf( ((mxCell) atributo).getId() ), this );
+            this.grafico.getModel().endUpdate();
+        }
+    }
+    
     public TipoAtributoEnum getTipoAtributo() {
         return tipoAtributo;
     }
@@ -88,72 +163,14 @@ public class Atributo {
     public void setAgregacao(Agregacao agregacao) {
         this.agregacao = agregacao;
     }
-    
-    public void add(Object objeto){
-        String caracteristicas = "";
-       
-        if(tipoAtributo == TipoAtributoEnum.SIMPLES){
-            caracteristicas = "shape=ellipse;";
-        }
-        if(tipoAtributo == TipoAtributoEnum.CHAVE){
-            caracteristicas = "shape=ellipse;fontStyle=1";
-        }
-        if(tipoAtributo == TipoAtributoEnum.COMPOSTO){
-            caracteristicas = "shape=ellipse;";
-        }
-        if(tipoAtributo == TipoAtributoEnum.MULTIVALORADO){
-            caracteristicas = "shape=doubleEllipse;";
-        }
-        if(tipoAtributo == TipoAtributoEnum.DERIVADO){
-            caracteristicas = "shape=ellipse;dashed=true;";
-        }
 
-        this.grafico.getModel().beginUpdate();
-        Object atributo = null;
-        Object atributo_1 = null;
-        Object atributo_2 = null;
-        Object parent = this.grafico.getDefaultParent();
-        try{
-            double posx = ((mxCell) objeto).getGeometry().getX();
-            double posy = ((mxCell) objeto).getGeometry().getY();
-
-            atributo = this.grafico.insertVertex(parent, null, this.nome +  this.cont_Atributo, posx, posy - 50, this.tamanhoLargura, this.tamanhoAltura, caracteristicas);
-            
-            this.grafico.insertEdge(parent, null, null, atributo, entidade,"startArrow=none;endArrow=none;");
-
-            if("composto".equals(tipoAtributo.toString())){
-                this.cont_Atributo++;
-                atributo_1 = this.grafico.insertVertex(parent, null, "Atributo" + this.cont_Atributo, this.pX - 55, this.pY - 50, this.tamanhoLargura, this.tamanhoAltura, "shape=ellipse;rounded=true;");
-                Atributo atr_1 = new Atributo(this.grafico, this.mapaGraficoAtributos, TipoAtributoEnum.SIMPLES, "Atributo" + this.cont_Atributo, this.pX, this.pY, cont_Atributo);
-                atr_1.setForma((mxCell) atributo_1);
-                this.mapaGraficoAtributos.put( Integer.valueOf( ((mxCell) atributo_1).getId() ), atr_1 );
-                
-                this.cont_Atributo++;
-                atributo_2 = this.grafico.insertVertex(parent, null, "Atributo" + this.cont_Atributo, this.pX + 55, this.pY - 50, this.tamanhoLargura, this.tamanhoAltura, "shape=ellipse;rounded=true;");
-                Atributo atr_2 = new Atributo(this.grafico, this.mapaGraficoAtributos, TipoAtributoEnum.SIMPLES, "Atributo" + this.cont_Atributo, this.pX, this.pY, cont_Atributo);
-                atr_2.setForma((mxCell) atributo_2);
-                this.mapaGraficoAtributos.put( Integer.valueOf( ((mxCell) atributo_2).getId() ), atr_2 );
-                
-                this.grafico.insertEdge(parent, null, null, atributo_1, atributo,"startArrow=none;endArrow=none;");
-                this.grafico.insertEdge(parent, null, null, atributo_2, atributo,"startArrow=none;endArrow=none;");
-            }
-        }
-        finally{
-            if(this.entidade != null){
-                this.entidade.getAtributos().add(this);
-            }
-            
-            if(this.relacionamento != null){
-                this.relacionamento.getAtributos().add(this);
-            }
-            
-            if(this.atributo != null){
-                this.atributo.getAtributos().add(this);
-            } 
-            
-            this.forma = (mxCell) atributo;
-            this.mapaGraficoAtributos.put( Integer.valueOf( ((mxCell) atributo).getId() ), this );
-            this.grafico.getModel().endUpdate();
-        }
+    public boolean isIsRelacionamento() {
+        return isRelacionamento;
     }
+
+    public void setIsRelacionamento(boolean isRelacionamento) {
+        this.isRelacionamento = isRelacionamento;
+    }
+    
+    
 }

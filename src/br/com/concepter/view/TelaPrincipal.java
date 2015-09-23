@@ -10,9 +10,15 @@ import br.com.concepter.model.enuns.TipoAtributoEnum;
 import br.com.concepter.model.enuns.TipoEntidadeEnum;
 import br.com.concepter.model.enuns.TipoEspecializacaoEnum;
 import br.com.concepter.utils.FileUtils;
+import com.mxgraph.util.mxCellRenderer;
 import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -90,15 +96,12 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
-        jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
-        jMenuItem6 = new javax.swing.JMenuItem();
         jMenuItem7 = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         jMenuItem8 = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
         jMenu3 = new javax.swing.JMenu();
 
         jButton1.setText("jButton1");
@@ -320,7 +323,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jToolBar1.add(jSeparator21);
 
         jButtonEntidadeFraca1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/concepter/view/resources/imagens/Retangulo losango.jpg"))); // NOI18N
-        jButtonEntidadeFraca1.setToolTipText("Entidade Fraca");
+        jButtonEntidadeFraca1.setToolTipText("Agregação binária");
         jButtonEntidadeFraca1.setFocusable(false);
         jButtonEntidadeFraca1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonEntidadeFraca1.setMaximumSize(new java.awt.Dimension(34, 23));
@@ -337,7 +340,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jToolBar1.add(jSeparator16);
 
         jButtonEntidadeFraca2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/concepter/view/resources/imagens/Retangulo losango.jpg"))); // NOI18N
-        jButtonEntidadeFraca2.setToolTipText("Entidade Fraca");
+        jButtonEntidadeFraca2.setToolTipText("Agregação ternária");
         jButtonEntidadeFraca2.setFocusable(false);
         jButtonEntidadeFraca2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonEntidadeFraca2.setMaximumSize(new java.awt.Dimension(34, 23));
@@ -354,7 +357,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jToolBar1.add(jSeparator15);
 
         jButtonEntidadeFraca3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/concepter/view/resources/imagens/Retangulo losango.jpg"))); // NOI18N
-        jButtonEntidadeFraca3.setToolTipText("Entidade Fraca");
+        jButtonEntidadeFraca3.setToolTipText("Agregação quaternária");
         jButtonEntidadeFraca3.setFocusable(false);
         jButtonEntidadeFraca3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonEntidadeFraca3.setMaximumSize(new java.awt.Dimension(34, 23));
@@ -383,9 +386,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
         });
         jMenu1.add(jMenuItem2);
 
-        jMenuItem3.setText("Importar ...");
-        jMenu1.add(jMenuItem3);
-
         jMenuItem4.setText("Salvar");
         jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -398,10 +398,12 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jMenu1.add(jMenuItem5);
         jMenu1.add(jSeparator1);
 
-        jMenuItem6.setText("Imprimir");
-        jMenu1.add(jMenuItem6);
-
-        jMenuItem7.setText("Exportar");
+        jMenuItem7.setText("Exportar imagem ...");
+        jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem7ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem7);
         jMenu1.add(jSeparator2);
 
@@ -410,11 +412,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         jMenuBarTelaPrincipal.add(jMenu1);
 
-        jMenu2.setLabel("Inserir");
-        jMenuBarTelaPrincipal.add(jMenu2);
-
+        jMenu3.setText("Sobre");
         jMenu3.setActionCommand("Ajuda");
-        jMenu3.setLabel("Ajuda");
         jMenuBarTelaPrincipal.add(jMenu3);
 
         setJMenuBar(jMenuBarTelaPrincipal);
@@ -533,13 +532,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
         if(jfc.showSaveDialog(jMenu1) == JFileChooser.APPROVE_OPTION){
              fileUtils.saveGraph(areaGrafica.getAreaGrafico(), jfc.getSelectedFile().getPath());
         }
-        
-//        BufferedImage image = mxCellRenderer.createBufferedImage(areaGrafica.getGrafico(), null, 1, Color.WHITE, true, null);
-//        try {
-//            ImageIO.write(image, "PNG", new File("C:\\Users\\AllanMagnum\\Pictures\\graph.png"));
-//        } catch (IOException ex) {
-//            Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-//        }
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
@@ -564,6 +556,21 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private void jButtonEntidadeFraca3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEntidadeFraca3ActionPerformed
         botao = 9;
     }//GEN-LAST:event_jButtonEntidadeFraca3ActionPerformed
+
+    private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
+        JFileChooser jfc = new JFileChooser();
+        
+        FileUtils fileUtils = new FileUtils();
+        
+        if(jfc.showSaveDialog(jMenu1) == JFileChooser.APPROVE_OPTION){
+            BufferedImage image = mxCellRenderer.createBufferedImage(areaGrafica.getGrafico(), null, 1, Color.WHITE, true, null);
+            try {
+                ImageIO.write(image, "PNG", new File(jfc.getSelectedFile().getPath() + ".png"));
+            } catch (IOException ex) {
+                Logger.getLogger(TelaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_jMenuItem7ActionPerformed
 
  
     
@@ -613,15 +620,12 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton jButtonRelacionamentoQuaternario;
     private javax.swing.JButton jButtonRelacionamentoTernario;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBarTelaPrincipal;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
-    private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;
     private javax.swing.JPopupMenu.Separator jSeparator1;

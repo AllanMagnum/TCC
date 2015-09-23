@@ -27,11 +27,6 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem2ActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem3">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Importar ..."/>
-              </Properties>
-            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem4">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Salvar"/>
@@ -47,15 +42,13 @@
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator1">
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem6">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Imprimir"/>
-              </Properties>
-            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem7">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Exportar"/>
+                <Property name="text" type="java.lang.String" value="Exportar imagem ..."/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem7ActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator2">
             </MenuItem>
@@ -66,15 +59,10 @@
             </MenuItem>
           </SubComponents>
         </Menu>
-        <Menu class="javax.swing.JMenu" name="jMenu2">
-          <Properties>
-            <Property name="label" type="java.lang.String" value="Inserir"/>
-          </Properties>
-        </Menu>
         <Menu class="javax.swing.JMenu" name="jMenu3">
           <Properties>
+            <Property name="text" type="java.lang.String" value="Sobre"/>
             <Property name="actionCommand" type="java.lang.String" value="Ajuda"/>
-            <Property name="label" type="java.lang.String" value="Ajuda"/>
           </Properties>
         </Menu>
       </SubComponents>
@@ -473,7 +461,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/br/com/concepter/view/resources/imagens/Retangulo losango.jpg"/>
             </Property>
-            <Property name="toolTipText" type="java.lang.String" value="Entidade Fraca"/>
+            <Property name="toolTipText" type="java.lang.String" value="Agrega&#xe7;&#xe3;o bin&#xe1;ria"/>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -499,7 +487,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/br/com/concepter/view/resources/imagens/Retangulo losango.jpg"/>
             </Property>
-            <Property name="toolTipText" type="java.lang.String" value="Entidade Fraca"/>
+            <Property name="toolTipText" type="java.lang.String" value="Agrega&#xe7;&#xe3;o tern&#xe1;ria"/>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -525,7 +513,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/br/com/concepter/view/resources/imagens/Retangulo losango.jpg"/>
             </Property>
-            <Property name="toolTipText" type="java.lang.String" value="Entidade Fraca"/>
+            <Property name="toolTipText" type="java.lang.String" value="Agrega&#xe7;&#xe3;o quatern&#xe1;ria"/>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
