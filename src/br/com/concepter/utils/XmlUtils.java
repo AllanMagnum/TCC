@@ -5,7 +5,13 @@
  */
 package br.com.concepter.utils;
 
+import br.com.concepter.model.beans.Entidade;
+import br.com.concepter.model.beans.Relacao;
+import br.com.concepter.model.enuns.TipoObrigatoriedadeEnum;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -17,32 +23,28 @@ import javax.xml.bind.Unmarshaller;
  */
 public class XmlUtils<T> {
     
-    public void save(String fileName, Class<T> objeto){
-        try {
-
-            File file = new File(fileName);
-            JAXBContext jaxbContext = JAXBContext.newInstance(objeto.getClass());
+    public void save(T object){
+        try {            
+            JAXBContext jaxbContext = JAXBContext.newInstance(Entidade.class);
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
-            // output pretty printed
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-            jaxbMarshaller.marshal(objeto.getClass(), file);
-            jaxbMarshaller.marshal(objeto.getClass(), System.out);
+            jaxbMarshaller.marshal(object, System.out);
 
 	} catch (JAXBException e) {
             e.printStackTrace();
 	}
     }
 
-    public void load(String fileName, Class<T> objeto){
+    public void load(String fileName, Entidade objeto){
         try {
             File file = new File(fileName);
             JAXBContext jaxbContext = JAXBContext.newInstance(objeto.getClass());
 
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            Class<T> classe = (Class<T>) jaxbUnmarshaller.unmarshal(file);
-            System.out.println(classe);
+//            Class<T> classe = (Class<T>) jaxbUnmarshaller.unmarshal(file);
+//            System.out.println(classe);
 
 	} catch (JAXBException e) {
             e.printStackTrace();

@@ -6,68 +6,167 @@
 
 package br.com.concepter.model.beans;
 
+import br.com.concepter.model.enuns.TipoEntidadeEnum;
 import br.com.concepter.model.enuns.TipoEspecializacaoEnum;
+import com.mxgraph.model.mxCell;
 import com.mxgraph.view.mxGraph;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author AllanMagnum
  */
+@XmlRootElement
 public class Especializacao {
-        private String nome;
-	private mxGraph grafico; 
-	private HashMap mapaGrafico;
-	private float pX;
-	private float pY;
-	private int tamanhoLargura;
-	private int tamanhoAltura;
-        private TipoEspecializacaoEnum tipoEspecializacao;
-	
-	public Especializacao(mxGraph grafico, HashMap mapaGrafico, float pX, float pY, TipoEspecializacaoEnum tipoEspecializacao){
-		this.grafico = grafico;
-		this.mapaGrafico = mapaGrafico;
-		this.tamanhoLargura = 20;
-		this.tamanhoAltura = 20;
-                this.pX = pX;
-		this.pY = pY + 50;
-                this.tipoEspecializacao = tipoEspecializacao;
-	}
+    private String nome;
+    private TipoEspecializacaoEnum tipoEspecializacao; 
+    private List<Entidade> entidades = new ArrayList<Entidade>();
+
+    private HashMap<Integer, Especializacao> mapaGraficoEspecializacao = new HashMap<Integer, Especializacao>();
+
+    private mxGraph grafico;
+    private double pX;
+    private double pY;
+    private int tamanhoLargura;
+    private int tamanhoAltura;
+    private mxCell cell;
+
+    public Especializacao() {
+    }
+    
+    public Especializacao(mxGraph grafico, HashMap<Integer, Especializacao> mapaGraficoEspecializacao, double pX, double pY, TipoEspecializacaoEnum tipoEspecializacao){
+            this.grafico = grafico;
+            this.mapaGraficoEspecializacao = mapaGraficoEspecializacao;
+            this.tamanhoLargura = 20;
+            this.tamanhoAltura = 20;
+            this.pX = pX;
+            this.pY = pY + 50;
+            this.tipoEspecializacao = tipoEspecializacao;
+    }
+
+    public void add(Entidade entidade, HashMap<Integer, Entidade> mapaGraficoEntidades, Integer contEntidade){
+        this.grafico.getModel().beginUpdate();
+        Object parent = this.grafico.getDefaultParent();
         
-        public float getPX(){
-            return this.pX;
+        if(tipoEspecializacao == TipoEspecializacaoEnum.DISJUNCAO){
+            nome = "d";
+        }
+        if(tipoEspecializacao == TipoEspecializacaoEnum.SOBREPOSICAO){
+            nome = "o";
         }
         
-        public float getPY(){
-            return this.pY;
+        Double posx = entidade.getCell().getGeometry().getX();
+        Double posy = entidade.getCell().getGeometry().getY();
+
+        try{	
+            this.cell = (mxCell) this.grafico.insertVertex(parent, null, this.nome, posx+40, posy+100, this.tamanhoLargura, this.tamanhoAltura, "shape=ellipse;");
+            
+            Entidade entidade_1 = new Entidade(this.grafico, mapaGraficoEntidades, "Entidade" + contEntidade, posx - 125, posy + 170, TipoEntidadeEnum.FORTE);
+            entidade_1.add();
+            
+            Entidade entidade_2 = new Entidade(this.grafico, mapaGraficoEntidades, "Entidade" + ++contEntidade, posx + 125, posy + 170, TipoEntidadeEnum.FORTE);
+            entidade_2.add();
+            
+            this.entidades.add(entidade_1);
+            this.entidades.add(entidade_2);
+            
+            entidade.setEspeciaizacao(this);
+            
+            this.grafico.insertEdge(parent, null, "", this.cell, entidade.getCell(),"startArrow=none;endArrow=none;strokeColor=red;");
+            
+            this.grafico.insertEdge(parent, null, "U", entidade_1.getCell(), this.cell,"startArrow=none;endArrow=none;strokeColor=red;image=/../../view/resources/imagens/estarContigo.png");
+            this.grafico.insertEdge(parent, null, "U", entidade_2.getCell(), this.cell,"startArrow=none;endArrow=none;strokeColor=red;");
         }
-	
-	public void add(Object entidade){
-            
-            if(tipoEspecializacao == TipoEspecializacaoEnum.DISJUNCAO){
-                nome = "d";
-            }
-            if(tipoEspecializacao == TipoEspecializacaoEnum.SOBREPOSICAO){
-                nome = "o";
-            }
-                
-            
-            this.grafico.getModel().beginUpdate();
-            Object especializacao = null;
-            Object subClasse_1 = null;
-            Object subClasse_2 = null;
-            Object parent = this.grafico.getDefaultParent();
-            try{	
-                especializacao = this.grafico.insertVertex(parent, null, this.nome, this.pX, this.pY, this.tamanhoLargura, this.tamanhoAltura, "shape=ellipse;");
-                subClasse_1 = this.grafico.insertVertex(parent, null, "subClasse1", this.pX - 125, this.pY + 50, 100, 50, "fillColor=yellow;shape=rectangle;");
-                subClasse_2 = this.grafico.insertVertex(parent, null, "subClasse2", this.pX + 50, this.pY + 50, 100, 50, "fillColor=yellow;shape=rectangle;");
-                this.grafico.insertEdge(parent, null, null, especializacao, entidade,"startArrow=none;endArrow=none;");
-                this.grafico.insertEdge(parent, null, "U", subClasse_1, especializacao,"startArrow=none;endArrow=none;");
-                this.grafico.insertEdge(parent, null, "U", subClasse_2, especializacao,"startArrow=none;endArrow=none;");
-            }
-            
-            finally{
-                this.grafico.getModel().endUpdate();
-            }
+
+        finally{
+            this.mapaGraficoEspecializacao.put( Integer.valueOf( this.cell.getId() ), this);
+            this.grafico.getModel().endUpdate();
         }
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public TipoEspecializacaoEnum getTipoEspecializacao() {
+        return tipoEspecializacao;
+    }
+
+    public void setTipoEspecializacao(TipoEspecializacaoEnum tipoEspecializacao) {
+        this.tipoEspecializacao = tipoEspecializacao;
+    }
+
+    public List<Entidade> getEntidades() {
+        return entidades;
+    }
+
+    public void setEntidades(List<Entidade> entidades) {
+        this.entidades = entidades;
+    }
+
+    public HashMap<Integer, Especializacao> getMapaGraficoEspecializacao() {
+        return mapaGraficoEspecializacao;
+    }
+
+    public void setMapaGraficoEspecializacao(HashMap<Integer, Especializacao> mapaGraficoEspecializacao) {
+        this.mapaGraficoEspecializacao = mapaGraficoEspecializacao;
+    }
+    @XmlTransient
+    public mxGraph getGrafico() {
+        return grafico;
+    }
+
+    public void setGrafico(mxGraph grafico) {
+        this.grafico = grafico;
+    }
+    @XmlTransient
+    public double getpX() {
+        return pX;
+    }
+
+    public void setpX(double pX) {
+        this.pX = pX;
+    }
+    @XmlTransient
+    public double getpY() {
+        return pY;
+    }
+
+    public void setpY(double pY) {
+        this.pY = pY;
+    }
+    @XmlTransient
+    public int getTamanhoLargura() {
+        return tamanhoLargura;
+    }
+
+    public void setTamanhoLargura(int tamanhoLargura) {
+        this.tamanhoLargura = tamanhoLargura;
+    }
+    @XmlTransient
+    public int getTamanhoAltura() {
+        return tamanhoAltura;
+    }
+
+    public void setTamanhoAltura(int tamanhoAltura) {
+        this.tamanhoAltura = tamanhoAltura;
+    }
+    @XmlTransient
+    public mxCell getCell() {
+        return cell;
+    }
+
+    public void setCell(mxCell cell) {
+        this.cell = cell;
+    }
+        
+        
 }

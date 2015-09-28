@@ -6,28 +6,35 @@ import java.util.HashMap;
 import com.mxgraph.view.mxGraph;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+@XmlRootElement
 public class Atributo {
 
     private String nome;
-    private mxGraph grafico; 
+    private TipoAtributoEnum tipoAtributo;
     private Entidade entidade;
     private Atributo atributo;
     private Relacionamento relacionamento;
     private Agregacao agregacao;
     private List<Atributo> atributos = new ArrayList<>();
-    private HashMap<Integer, Atributo> mapaGraficoAtributos;
-    private float pX;
-    private float pY;
+    
+    private mxGraph grafico; 
+    private mxCell forma;
+    private double pX;
+    private double pY;
     private int tamanhoLargura;
     private int tamanhoAltura;
-    private TipoAtributoEnum tipoAtributo;
-    private mxCell forma;
+    
+    private HashMap<Integer, Atributo> mapaGraficoAtributos;
     private Integer cont_Atributo;
     private boolean isRelacionamento;
 
-    public Atributo(mxGraph grafico, HashMap<Integer, Atributo> mapaGraficoAtributos, TipoAtributoEnum tipoAtributo, String nome, float pX, float pY, Integer cont_Atributo){
+    public Atributo() {
+    }
+
+    public Atributo(mxGraph grafico, HashMap<Integer, Atributo> mapaGraficoAtributos, TipoAtributoEnum tipoAtributo, String nome, double pX, double pY, Integer cont_Atributo){
             this.nome = nome;
             this.grafico = grafico;
             this.mapaGraficoAtributos = mapaGraficoAtributos;
@@ -46,7 +53,7 @@ public class Atributo {
             caracteristicas = "fillColor=white;shape=ellipse;";
         }
         if(tipoAtributo == TipoAtributoEnum.CHAVE){
-            caracteristicas = "fillColor=white;shape=ellipse;fontStyle=1";
+            caracteristicas = "fillColor=white;shape=ellipse;fontStyle=1;";
         }
         if(tipoAtributo == TipoAtributoEnum.COMPOSTO){
             caracteristicas = "fillColor=white;shape=ellipse;";
@@ -112,18 +119,23 @@ public class Atributo {
             this.grafico.getModel().endUpdate();
         }
     }
-    
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+  
     public TipoAtributoEnum getTipoAtributo() {
         return tipoAtributo;
     }
 
-    public void setForma(mxCell forma) {
-        this.forma = forma;
+    public void setTipoAtributo(TipoAtributoEnum tipoAtributo) {
+        this.tipoAtributo = tipoAtributo;
     }
-    public mxCell getForma() {
-        return forma;
-    }
-
+    @XmlTransient
     public Entidade getEntidade() {
         return entidade;
     }
@@ -131,7 +143,7 @@ public class Atributo {
     public void setEntidade(Entidade entidade) {
         this.entidade = entidade;
     }
-
+    @XmlTransient
     public Atributo getAtributo() {
         return atributo;
     }
@@ -139,7 +151,7 @@ public class Atributo {
     public void setAtributo(Atributo atributo) {
         this.atributo = atributo;
     }
-
+    @XmlTransient
     public Relacionamento getRelacionamento() {
         return relacionamento;
     }
@@ -147,7 +159,15 @@ public class Atributo {
     public void setRelacionamento(Relacionamento relacionamento) {
         this.relacionamento = relacionamento;
     }
-
+    @XmlTransient
+    public Agregacao getAgregacao() {
+        return agregacao;
+    }
+   
+    public void setAgregacao(Agregacao agregacao) {
+        this.agregacao = agregacao;
+    }
+    @XmlTransient
     public List<Atributo> getAtributos() {
         return atributos;
     }
@@ -155,15 +175,71 @@ public class Atributo {
     public void setAtributos(List<Atributo> atributos) {
         this.atributos = atributos;
     }
-
-    public Agregacao getAgregacao() {
-        return agregacao;
+    @XmlTransient
+    public mxGraph getGrafico() {
+        return grafico;
+    }
+    
+    public void setGrafico(mxGraph grafico) {
+        this.grafico = grafico;
+    }
+    @XmlTransient
+    public mxCell getForma() {
+        return forma;
     }
 
-    public void setAgregacao(Agregacao agregacao) {
-        this.agregacao = agregacao;
+    public void setForma(mxCell forma) {
+        this.forma = forma;
+    }
+    @XmlTransient
+    public double getpX() {
+        return pX;
     }
 
+    public void setpX(double pX) {
+        this.pX = pX;
+    }
+    @XmlTransient
+    public double getpY() {
+        return pY;
+    }
+
+    public void setpY(double pY) {
+        this.pY = pY;
+    }
+    @XmlTransient
+    public int getTamanhoLargura() {
+        return tamanhoLargura;
+    }
+
+    public void setTamanhoLargura(int tamanhoLargura) {
+        this.tamanhoLargura = tamanhoLargura;
+    }
+    @XmlTransient
+    public int getTamanhoAltura() {
+        return tamanhoAltura;
+    }
+
+    public void setTamanhoAltura(int tamanhoAltura) {
+        this.tamanhoAltura = tamanhoAltura;
+    }
+    @XmlTransient
+    public HashMap<Integer, Atributo> getMapaGraficoAtributos() {
+        return mapaGraficoAtributos;
+    }
+
+    public void setMapaGraficoAtributos(HashMap<Integer, Atributo> mapaGraficoAtributos) {
+        this.mapaGraficoAtributos = mapaGraficoAtributos;
+    }
+    @XmlTransient
+    public Integer getCont_Atributo() {
+        return cont_Atributo;
+    }
+
+    public void setCont_Atributo(Integer cont_Atributo) {
+        this.cont_Atributo = cont_Atributo;
+    }
+    @XmlTransient
     public boolean isIsRelacionamento() {
         return isRelacionamento;
     }
@@ -171,6 +247,7 @@ public class Atributo {
     public void setIsRelacionamento(boolean isRelacionamento) {
         this.isRelacionamento = isRelacionamento;
     }
+    
     
     
 }

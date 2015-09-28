@@ -10,8 +10,10 @@ import br.com.concepter.model.beans.Agregacao;
 import br.com.concepter.model.beans.Atributo;
 import br.com.concepter.model.beans.Especializacao;
 import br.com.concepter.model.beans.Entidade;
+import br.com.concepter.model.beans.Relacao;
 import br.com.concepter.model.beans.Relacionamento;
 import br.com.concepter.model.enuns.TipoAtributoEnum;
+import br.com.concepter.model.enuns.TipoObrigatoriedadeEnum;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
@@ -20,9 +22,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Set;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -40,17 +41,20 @@ public class AreaGrafica extends JInternalFrame {
     private Integer cont_entidade = 0;
     private Integer cont_relacionamento = 0;
     private Integer cont_atributo = new Integer(0);
+    
     private HashMap<Integer, Entidade> mapaGraficoEntidades = new HashMap<Integer, Entidade>();
     private HashMap<Integer, Atributo> mapaGraficoAtributos = new HashMap<Integer, Atributo>();
     private HashMap<Integer, Relacionamento> mapaGraficoRelacionamentos = new HashMap<Integer, Relacionamento>();
     private HashMap<Integer, Especializacao> mapaGraficoEspecializacao = new HashMap<Integer, Especializacao>();
-    private HashMap<Integer, Object> mapaGraficoAgregacao = new HashMap<Integer, Object>();
+    private HashMap<Integer, Agregacao> mapaGraficoAgregacao = new HashMap<Integer, Agregacao>();
+    
     private Object cell;
     private Entidade entidade_1 = null;
     private Entidade entidade_2 = null;
     private Entidade entidade_3 = null;
     private Entidade entidade_4 = null;
-    private Object relacionamento = null;
+    private Relacionamento relacionamento = null;
+    
     private JPopupMenu menuPopup;
     private JMenu menuComplitude;
     private JMenu menuCardinalidade;
@@ -63,7 +67,7 @@ public class AreaGrafica extends JInternalFrame {
     private JMenu menuParcialidade;
     private JMenu menuNn;
     private JMenu menu1n;
-    private static float px, py;
+    private static double px, py;
     
     public AreaGrafica(){
         this.grafico = new mxGraph();
@@ -77,16 +81,20 @@ public class AreaGrafica extends JInternalFrame {
 	
         this.grafico.setEdgeLabelsMovable(false);   //Nao permite que a descricao da seta seja movida
         this.grafico.setCellsDisconnectable(false); //Nao Permite que as setas sejam desconectadas
-
-        //this.grafico.setAllowDanglingEdges(false);
+        this.grafico.setCellsResizable(false);      //Nao Permite que os objetos sejam redimensionados
+       
+        areaGrafico.setConnectable(false); // Nao permite que setas sejam criadas de dentro de um objeto
+        areaGrafico.getGraphHandler().setRemoveCellsFromParent(false); //Nao permiti que os objetos sejam removidos do objetos pai
+        
+        this.grafico.setAllowDanglingEdges(false);
         this.grafico.setAllowLoops(false);
-	this.grafico.setCellsResizable(false);
+	
 	this.grafico.setCellsBendable(false);
 	this.grafico.setSplitEnabled(true);
 	this.grafico.setKeepEdgesInForeground(false);
 	this.grafico.setKeepEdgesInBackground(true);
          
-        areaGrafico.setConnectable(false);
+        
       
         this.add(areaGrafico);
         
@@ -123,16 +131,36 @@ public class AreaGrafica extends JInternalFrame {
         return this.areaGrafico;
     }
     
-    public float getPx(){
+    public double getPx(){
         return px;
     }
     
-    public float getPy(){
+    public double getPy(){
         return py;
     }
 
     public void setCont_atributo(Integer cont_atributo) {
         this.cont_atributo = cont_atributo;
+    }
+
+    public HashMap<Integer, Entidade> getMapaGraficoEntidades() {
+        return mapaGraficoEntidades;
+    }
+
+    public HashMap<Integer, Atributo> getMapaGraficoAtributos() {
+        return mapaGraficoAtributos;
+    }
+
+    public HashMap<Integer, Relacionamento> getMapaGraficoRelacionamentos() {
+        return mapaGraficoRelacionamentos;
+    }
+
+    public HashMap<Integer, Especializacao> getMapaGraficoEspecializacao() {
+        return mapaGraficoEspecializacao;
+    }
+
+    public HashMap<Integer, Agregacao> getMapaGraficoAgregacao() {
+        return mapaGraficoAgregacao;
     }
     
     
@@ -153,67 +181,77 @@ public class AreaGrafica extends JInternalFrame {
         
     }
     
-    private void preencherPopupMenu(){
-        Entidade entidade = (Entidade) mapaGraficoEntidades.get( Integer.parseInt(((mxCell) cell).getId()));
-
-        List<Object> entidades = entidade.getRelacionamentos();
-        
-        if(!entidades.isEmpty()){
-            menuPopup.add(menuComplitude);
-            menuPopup.add(menuCardinalidade);
-            
-            menuComplitude.add(menuParcialidade);
-            menuComplitude.add(menuTotalidade);
-        
-            menuCardinalidade.add(menuNn);
-            menuCardinalidade.add(menu1n);
-            for (Object entidade1 : entidades) {
-                JMenuItem jmi = new JMenuItem(((mxCell)entidade1).getValue().toString());
-                jmi.addActionListener(new BotaoTotalidadePopupMenu());
-                menu1n.add(jmi);
-//                menuParcialidade.addActionListener(new BotaoDeletarPopupMenu());
-//                menuTotalidade.add( ((mxCell)entidade1).getValue().toString() );
-//                menuTotalidade.addActionListener(new BotaoDeletarPopupMenu());
-//                menu1n.add( ((mxCell)entidade1).getValue().toString() );
-//                menu1n.addActionListener(new BotaoDeletarPopupMenu());
-//                menuNn.add( ((mxCell)entidade1).getValue().toString() );
-//                menu1n.addActionListener(new BotaoDeletarPopupMenu());
-            }
-        }
-    }
-    
     public class BotaoDeletarPopupMenu implements ActionListener {
         @Override
 	public void actionPerformed(ActionEvent e) {
             grafico.getModel().remove(cell);
 	}
     }
-    
-    public class BotaoTotalidadePopupMenu implements ActionListener {
-        @Override
-	public void actionPerformed(ActionEvent e) {
-            mxCell source = (mxCell)cell;
-            
-            if(source.getEdgeCount() > 0)
-            {
-                for(int i=0; i < source.getEdgeCount(); i++)
-                {
-                    mxCell target = (mxCell)((mxCell)source.getEdgeAt(i)).getTarget();
-                    if(target != source)
-                    {
-                        JOptionPane.showMessageDialog(null, source.getValue().toString() );
-                    }
-                }
-            }
-            
-	}
-    }
-    
+   
     public class BotaoBinarioPopupMenu implements ActionListener {
         @Override
 	public void actionPerformed(ActionEvent e) {
             TelaPrincipal.setBotao(7);
         }    
+    }
+    
+    public class OnClickJMenuItemComplitude implements ActionListener {
+        @Override
+	public void actionPerformed(ActionEvent e) {
+            mxCell relacionamento_cell = (mxCell)cell;
+            
+            JMenuItem menuItem = ((JMenuItem) e.getSource());
+            JMenu parent = (JMenu) ((JPopupMenu) menuItem.getParent()).getInvoker();
+            
+            for (int i = 0; i < relacionamento_cell.getEdgeCount(); i++) {
+                String entidade_str = ((mxCell)relacionamento_cell.getEdgeAt(i)).getSource().getValue().toString();
+                Entidade entidade = getMapaGraficoEntidades().get( Integer.valueOf( ((mxCell)relacionamento_cell.getEdgeAt(i)).getSource().getId()));
+                
+                if( entidade_str.equals(parent.getText()) ){
+                    
+                    if( "Total".equals(((JMenuItem)e.getSource()).getText()) ){
+                        relacionamento_cell.getEdgeAt(i).setStyle("startArrow=none;endArrow=none;strokeColor=black;fontSize=15;fontStyle=1;");
+                        Relacionamento relacionamento = getMapaGraficoRelacionamentos().get(Integer.parseInt(relacionamento_cell.getId()));
+                        Relacao relacao = relacionamento.getEntidades().get(entidade);
+                        relacao.setObrigatoriedade(TipoObrigatoriedadeEnum.TOTAL);
+                    }else{
+                        relacionamento_cell.getEdgeAt(i).setStyle("startArrow=none;endArrow=none;strokeColor=red;fontSize=15;fontStyle=1;");
+                        Relacionamento relacionamento = getMapaGraficoRelacionamentos().get(Integer.parseInt(relacionamento_cell.getId()));
+                        Relacao relacao = relacionamento.getEntidades().get(entidade);
+                        relacao.setObrigatoriedade(TipoObrigatoriedadeEnum.PARCIAL);
+                    }
+                    
+                    getAreaGrafico().refresh();
+                    return;
+                }    
+            }
+	}
+    }
+    
+    public class OnClickJMenuItemCardinalidade implements ActionListener {
+        @Override
+	public void actionPerformed(ActionEvent e) {
+            mxCell relacionamento_cell = (mxCell)cell;
+            
+            JMenuItem menuItem = ((JMenuItem) e.getSource());
+            JMenu parent = (JMenu) ((JPopupMenu) menuItem.getParent()).getInvoker();
+            
+            for (int i = 0; i < relacionamento_cell.getEdgeCount(); i++) {
+                String entidade_str = ((mxCell)relacionamento_cell.getEdgeAt(i)).getSource().getValue().toString();
+                Entidade entidade = getMapaGraficoEntidades().get( Integer.valueOf( ((mxCell)relacionamento_cell.getEdgeAt(i)).getSource().getId() ));
+                
+                if( entidade_str.equals(parent.getText()) ){
+                  
+                    Relacionamento relacionamento = getMapaGraficoRelacionamentos().get(Integer.parseInt(relacionamento_cell.getId()));
+                    Relacao relacao = relacionamento.getEntidades().get(entidade);
+                    relacao.setCardinalidade(new String(((JMenuItem)e.getSource()).getText()));
+  
+                    relacionamento_cell.getEdgeAt(i).setValue(new String(((JMenuItem)e.getSource()).getText()));
+                   
+                    getAreaGrafico().refresh();
+                }    
+            }
+	}
     }
     
     public class ObjetoMer_RigthClick extends MouseAdapter {	
@@ -223,10 +261,13 @@ public class AreaGrafica extends JInternalFrame {
             boolean isEntidade = false;
             boolean isAtributo = false;
             boolean isAgregacao = false;
+            boolean isEspecializaco = false;
+            
             Entidade entidadeSelecionado = null;
             Relacionamento relacionamentoSelecionado = null;
             Atributo atributoSelecionado = null;
             Agregacao agregacaoSelecionado = null;
+            Especializacao especializacaoSelecionado = null;
             
             limparMenuPopup();
             
@@ -237,7 +278,8 @@ public class AreaGrafica extends JInternalFrame {
                 entidadeSelecionado = (Entidade) mapaGraficoEntidades.get( Integer.parseInt( ( (mxCell) areaGrafico.getCellAt(e.getX(), e.getY()) ).getId() ) );
                 atributoSelecionado =  (Atributo) mapaGraficoAtributos.get( Integer.parseInt( ( (mxCell) areaGrafico.getCellAt(e.getX(), e.getY()) ).getId() ) );
                 agregacaoSelecionado =  (Agregacao) mapaGraficoAgregacao.get( Integer.parseInt( ( (mxCell) areaGrafico.getCellAt(e.getX(), e.getY()) ).getId() ) );
-
+                especializacaoSelecionado =  (Especializacao) mapaGraficoEspecializacao.get( Integer.parseInt( ( (mxCell) areaGrafico.getCellAt(e.getX(), e.getY()) ).getId() ) );
+                
                 if(relacionamentoSelecionado != null){
                     isRelacionamento = true;
                 }
@@ -259,21 +301,29 @@ public class AreaGrafica extends JInternalFrame {
                 if(isRelacionamento){
                     menuPopup.add(menuComplitude);
                     menuPopup.add(menuCardinalidade);
-                    
-                    for (Entidade entidade : relacionamentoSelecionado.getEntidades()) {
-                        JMenu jm = new JMenu(entidade.getCell().getValue().toString());
+                    Set<Entidade> entidades = relacionamentoSelecionado.getEntidades().keySet();
+                    for (Entidade entidade : entidades) {
+                        JMenu jmCardinalidade = new JMenu(entidade.getCell().getValue().toString());
                         JMenuItem jmi1 = new JMenuItem("1");
                         JMenuItem jmiN = new JMenuItem("N");
-                        jm.add(jmi1);
-                        jm.add(jmiN);
-                        jmi1.addActionListener(new BotaoTotalidadePopupMenu());    
-                        jmiN.addActionListener(new BotaoTotalidadePopupMenu());
+                        jmCardinalidade.add(jmi1);
+                        jmCardinalidade.add(jmiN);
+                        jmi1.addActionListener(new OnClickJMenuItemCardinalidade());
+                        jmiN.addActionListener(new OnClickJMenuItemCardinalidade());
+                        
+                        JMenu jmComplitude = new JMenu(entidade.getCell().getValue().toString());
+                        JMenuItem jmiTotal = new JMenuItem("Total");
+                        JMenuItem jmiParcil = new JMenuItem("Parcial");
+                        jmComplitude.add(jmiParcil);
+                        jmComplitude.add(jmiTotal);
+                        jmiTotal.addActionListener(new OnClickJMenuItemComplitude());
+                        jmiParcil.addActionListener(new OnClickJMenuItemComplitude());
               
-                        menuCardinalidade.add(jm);
+                        menuCardinalidade.add(jmCardinalidade);
+                        menuComplitude.add(jmComplitude);
                     }
                    
                 }
-                         
 		menuPopup.show(e.getComponent(), e.getX(), e.getY());
             }
 	}
@@ -293,10 +343,13 @@ public class AreaGrafica extends JInternalFrame {
             boolean isEntidade = false;
             boolean isAtributo = false;
             boolean isAgregacao = false;
+            boolean isEspecializacao = false;
+            
             Entidade entidadeSelecionado = null;
             Relacionamento relacionamentoSelecionado = null;
             Atributo atributoSelecionado = null;
             Agregacao agregacaoSelecionado = null;
+            Especializacao especializacaoSelecionado = null;
             
             if(e.getButton() == MouseEvent.BUTTON1){
                 
@@ -310,6 +363,7 @@ public class AreaGrafica extends JInternalFrame {
                     entidadeSelecionado = (Entidade) mapaGraficoEntidades.get( Integer.parseInt( ( (mxCell) areaGrafico.getCellAt(e.getX(), e.getY()) ).getId() ) );
                     atributoSelecionado =  (Atributo) mapaGraficoAtributos.get( Integer.parseInt( ( (mxCell) areaGrafico.getCellAt(e.getX(), e.getY()) ).getId() ) );
                     agregacaoSelecionado =  (Agregacao) mapaGraficoAgregacao.get( Integer.parseInt( ( (mxCell) areaGrafico.getCellAt(e.getX(), e.getY()) ).getId() ) );
+                    especializacaoSelecionado =  (Especializacao) mapaGraficoEspecializacao.get( Integer.parseInt( ( (mxCell) areaGrafico.getCellAt(e.getX(), e.getY()) ).getId() ) );
                     
                     if(relacionamentoSelecionado != null){
                         isRelacionamento = true;
@@ -328,19 +382,33 @@ public class AreaGrafica extends JInternalFrame {
                             isAtributo = true;
                         }
                     }
+                    
+                    if(especializacaoSelecionado != null){
+                        isEspecializacao = true;
+                    }
                 }
                 
                 //botao entidade
                 if(TelaPrincipal.getBotao() == 1){
                     cont_entidade++;
-                    Entidade entidade = new Entidade( grafico, 
-                                                      mapaGraficoEntidades,
-                                                      cont_entidade ,
-                                                      "Entidade" + cont_entidade,
-                                                      px,
-                                                      py,
-                                                      TelaPrincipal.getTipoEntidade());
-                    entidade.add();
+                    if(isEspecializacao){
+                        Entidade entidade = new Entidade( grafico, 
+                                                          mapaGraficoEntidades,
+                                                          "Entidade" + cont_entidade,
+                                                          px,
+                                                          py,
+                                                          TelaPrincipal.getTipoEntidade());
+                        entidade.add(especializacaoSelecionado);
+                    }
+                    else{
+                        Entidade entidade = new Entidade( grafico, 
+                                                          mapaGraficoEntidades,
+                                                          "Entidade" + cont_entidade,
+                                                          px,
+                                                          py,
+                                                          TelaPrincipal.getTipoEntidade());
+                        entidade.add();
+                    }
                     TelaPrincipal.setTipoEntidade();
                     TelaPrincipal.setBotao(0);
                     px = 0;
@@ -459,7 +527,6 @@ public class AreaGrafica extends JInternalFrame {
                         cont_relacionamento++;
                          
                         Relacionamento relacionamento = new Relacionamento( grafico, 
-                                                                            mapaGraficoEntidades, 
                                                                             mapaGraficoRelacionamentos,
                                                                             "Relacionamento" + cont_relacionamento, 
                                                                             px,
@@ -488,8 +555,7 @@ public class AreaGrafica extends JInternalFrame {
                     
                     if (entidade_1 != null && entidade_2 != null && entidade_3 != null){
                         cont_relacionamento++;
-                        Relacionamento relacionamento = new Relacionamento( grafico, 
-                                                                            mapaGraficoEntidades, 
+                        Relacionamento relacionamento = new Relacionamento( grafico,
                                                                             mapaGraficoRelacionamentos,
                                                                             "Relacionamento" + cont_relacionamento,
                                                                             px,
@@ -522,7 +588,6 @@ public class AreaGrafica extends JInternalFrame {
                     if (entidade_1 != null && entidade_2 != null && entidade_3 != null && entidade_4 != null){
                         cont_relacionamento++;
                         Relacionamento relacionamento = new Relacionamento( grafico, 
-                                                                            mapaGraficoEntidades, 
                                                                             mapaGraficoRelacionamentos,
                                                                             "Relacionamento" + cont_relacionamento,  
                                                                             px,
@@ -540,16 +605,14 @@ public class AreaGrafica extends JInternalFrame {
                 
                  if(TelaPrincipal.getBotao() == 6){
                     
-                     
-                    if (cell != null){
-                        Especializacao disjuncao = new Especializacao( grafico, 
-                                                          mapaGraficoEspecializacao, 
-                                                          px,
-                                                          py,
-                                                          TelaPrincipal.getTipoEspecializacao());
-                        disjuncao.add(cell);
-                        TelaPrincipal.setBotao(0);
-                        cell = null;
+                    if(isEntidade){
+                        Especializacao disjuncao = new Especializacao(  grafico, 
+                                                                        mapaGraficoEspecializacao, 
+                                                                        px,
+                                                                        py,
+                                                                        TelaPrincipal.getTipoEspecializacao());
+                        disjuncao.add(entidadeSelecionado, mapaGraficoEntidades, ++cont_entidade);
+                        TelaPrincipal.setBotao(0); 
                     }
                 }
                 
@@ -560,7 +623,7 @@ public class AreaGrafica extends JInternalFrame {
                         entidade_1 = entidadeSelecionado;
                     }
                     if(relacionamento == null && isRelacionamento){
-                        relacionamento = areaGrafico.getCellAt(e.getX(), e.getY());
+                        relacionamento = relacionamentoSelecionado;
                     }
                     
                     if (relacionamento != null && entidade_1 != null){
@@ -589,7 +652,7 @@ public class AreaGrafica extends JInternalFrame {
                         entidade_1 = entidadeSelecionado;
                     }
                     if(relacionamento == null && isRelacionamento){
-                        relacionamento = areaGrafico.getCellAt(e.getX(), e.getY());
+                        relacionamento = relacionamentoSelecionado;
                     }
                     
                     if (relacionamento != null && entidade_1 != null && entidade_2 != null){
@@ -623,7 +686,7 @@ public class AreaGrafica extends JInternalFrame {
                         entidade_1 = entidadeSelecionado;
                     }
                     if(relacionamento == null && isRelacionamento){
-                        relacionamento = areaGrafico.getCellAt(e.getX(), e.getY());
+                        relacionamento = relacionamentoSelecionado;
                     }
                     
                     if (relacionamento != null && entidade_1 != null && entidade_2 != null && entidade_3 != null){

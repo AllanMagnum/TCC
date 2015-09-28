@@ -5,19 +5,29 @@ import com.mxgraph.view.mxGraph;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+@XmlRootElement
 public class Agregacao {
     private String nome;
-    private mxGraph grafico;
-    private HashMap mapaGraficoAgregacao;
-    private HashMap mapaGraficoRelacionamentos;
     private List<Atributo> atributos = new ArrayList<>();
-    private float pY;
-    private float pX;
+    private Relacionamento relacionamento;
+    
+    private mxGraph grafico;
+    private mxCell cell;
+    private double pY;
+    private double pX;
     private int tamanhoLargura;
     private int tamanhoAltura;
+    
+    private HashMap<Integer, Relacionamento> mapaGraficoRelacionamentos;
+    private HashMap<Integer, Agregacao> mapaGraficoAgregacao;
 
-    public Agregacao(mxGraph grafico, HashMap mapaGraficoAgregacao, HashMap mapaGraficoRelacionamentos, String nome, float pX, float pY){
+    public Agregacao() {
+    }
+    
+    public Agregacao(mxGraph grafico, HashMap<Integer, Agregacao> mapaGraficoAgregacao, HashMap<Integer, Relacionamento> mapaGraficoRelacionamentos, String nome, double pX, double pY){
             this.nome = nome;
             this.grafico = grafico;
             this.mapaGraficoAgregacao= mapaGraficoAgregacao;
@@ -27,44 +37,36 @@ public class Agregacao {
             this.pX = pX;
             this.pY = pY;
     }
-
-    public List<Atributo> getAtributos() {
-        return atributos;
-    }
-
-    public void setAtributos(List<Atributo> atributos) {
-        this.atributos = atributos;
-    }
         	
-    public void add(Object relacionamento, Object entidade_1){
+    public void add(Relacionamento relacionamento, Entidade entidade_1){
             this.grafico.getModel().beginUpdate();
             Object agregacao = null;
             Object parent = this.grafico.getDefaultParent();
 
             try{	
-                double posx = ((mxCell) relacionamento).getGeometry().getX() -20;
-                double posy = ((mxCell) relacionamento).getGeometry().getY() -20;
+                double posx =  relacionamento.getCell().getGeometry().getX() -20;
+                double posy = relacionamento.getCell().getGeometry().getY() -20;
 
-               agregacao = this.grafico.insertVertex(parent, null, null, posx, posy, this.tamanhoLargura, tamanhoAltura, "verticalAlign=top;fillColor=none;shape=rectangle;");
+                agregacao = this.grafico.insertVertex(parent, null, null, posx, posy, this.tamanhoLargura, tamanhoAltura, "verticalAlign=top;fillColor=none;shape=rectangle;");
 
+                relacionamento.getCell().getGeometry().setRect(20, 20, 100, 50);
 
-               ((mxCell) relacionamento).getGeometry().setRect(20, 20, 100, 50);
+                this.grafico.addCell(relacionamento.getCell(), agregacao);
+                
+                this.cell = (mxCell)agregacao;
+               
+                Relacionamento relacionamento_agregacao = new Relacionamento(grafico, mapaGraficoRelacionamentos, "Relacionamento", posx + 220, posy + 20);
 
-               this.grafico.addCell(relacionamento, agregacao);
-
-               relacionamento =  this.grafico.insertVertex(parent, null, "Relacionamento", posx + 220, posy + 20, 100, 50, "shape=rhombus;");
-
-               this.grafico.insertEdge(parent, null, "N-M", agregacao, relacionamento,"startArrow=none;endArrow=none;strokeColor=red;");
-               this.grafico.insertEdge(parent, null, "N-M", entidade_1, relacionamento,"startArrow=none;endArrow=none;strokeColor=red;"); 
+                relacionamento_agregacao.add(this, entidade_1);
             }
             finally{
-                this.mapaGraficoAgregacao.put( Integer.valueOf( ((mxCell) agregacao).getId() ), this ) ;
-                this.mapaGraficoRelacionamentos.put( Integer.valueOf( ((mxCell) relacionamento).getId() ), this ) ;
+                this.mapaGraficoAgregacao.put( Integer.valueOf( ((mxCell) agregacao).getId() ), this );
+                
                 this.grafico.getModel().endUpdate();
             }
     }
 
-    public void add(Object relacionamento, Object entidade_1, Object entidade_2){
+    public void add(Object relacionamento, Entidade entidade_1, Entidade entidade_2){
             this.grafico.getModel().beginUpdate();
             Object agregacao = null;
             Object parent = this.grafico.getDefaultParent();
@@ -78,17 +80,15 @@ public class Agregacao {
                 ((mxCell) relacionamento).getGeometry().setRect(20, 30, 100, 50);
 
                 this.grafico.addCell(relacionamento, agregacao);
+                
+                Relacionamento relacionamento_agregacao = new Relacionamento(grafico, mapaGraficoRelacionamentos, "Relacionamento", posx + 220, posy + 20);
 
-                relacionamento =  this.grafico.insertVertex(parent, null, "Relacionamento", posx + 220, posy + 20, 100, 50, "shape=rhombus;");
-
-                this.grafico.insertEdge(parent, null, "N-M", agregacao, relacionamento,"startArrow=none;endArrow=none;strokeColor=red;");
-                this.grafico.insertEdge(parent, null, "N-M", entidade_1, relacionamento,"startArrow=none;endArrow=none;strokeColor=red;");
-                this.grafico.insertEdge(parent, null, "N-M", entidade_2, relacionamento,"startArrow=none;endArrow=none;strokeColor=red;");
+                relacionamento_agregacao.add(this, entidade_1, entidade_2);
 
             }
             finally{
                 this.mapaGraficoAgregacao.put( Integer.valueOf( ((mxCell) agregacao).getId() ), this ) ;
-                this.mapaGraficoRelacionamentos.put( Integer.valueOf( ((mxCell) relacionamento).getId() ), this ) ;
+                
                 this.grafico.getModel().endUpdate();
             }
     }
@@ -117,8 +117,100 @@ public class Agregacao {
             }
             finally{
                 this.mapaGraficoAgregacao.put( Integer.valueOf( ((mxCell) agregacao).getId() ), this ) ;
-                this.mapaGraficoRelacionamentos.put( Integer.valueOf( ((mxCell) relacionamento).getId() ), this ) ;
+         
                 this.grafico.getModel().endUpdate();
             }
     }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public List<Atributo> getAtributos() {
+        return atributos;
+    }
+
+    public void setAtributos(List<Atributo> atributos) {
+        this.atributos = atributos;
+    }
+
+    public Relacionamento getRelacionamento() {
+        return relacionamento;
+    }
+
+    public void setRelacionamento(Relacionamento relacionamento) {
+        this.relacionamento = relacionamento;
+    }
+    @XmlTransient
+    public mxGraph getGrafico() {
+        return grafico;
+    }
+
+    public void setGrafico(mxGraph grafico) {
+        this.grafico = grafico;
+    }
+    @XmlTransient
+    public mxCell getCell() {
+        return cell;
+    }
+
+    public void setCell(mxCell cell) {
+        this.cell = cell;
+    }
+    @XmlTransient
+    public double getpY() {
+        return pY;
+    }
+
+    public void setpY(double pY) {
+        this.pY = pY;
+    }
+    @XmlTransient
+    public double getpX() {
+        return pX;
+    }
+
+    public void setpX(double pX) {
+        this.pX = pX;
+    }
+    @XmlTransient
+    public int getTamanhoLargura() {
+        return tamanhoLargura;
+    }
+
+    public void setTamanhoLargura(int tamanhoLargura) {
+        this.tamanhoLargura = tamanhoLargura;
+    }
+    @XmlTransient
+    public int getTamanhoAltura() {
+        return tamanhoAltura;
+    }
+
+    public void setTamanhoAltura(int tamanhoAltura) {
+        this.tamanhoAltura = tamanhoAltura;
+    }
+    @XmlTransient
+    public HashMap<Integer, Relacionamento> getMapaGraficoRelacionamentos() {
+        return mapaGraficoRelacionamentos;
+    }
+
+    public void setMapaGraficoRelacionamentos(HashMap<Integer, Relacionamento> mapaGraficoRelacionamentos) {
+        this.mapaGraficoRelacionamentos = mapaGraficoRelacionamentos;
+    }
+    @XmlTransient
+    public HashMap<Integer, Agregacao> getMapaGraficoAgregacao() {
+        return mapaGraficoAgregacao;
+    }
+
+    public void setMapaGraficoAgregacao(HashMap<Integer, Agregacao> mapaGraficoAgregacao) {
+        this.mapaGraficoAgregacao = mapaGraficoAgregacao;
+    }
+    
+    
+    
+    
 }

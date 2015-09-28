@@ -6,16 +6,20 @@
 
 package br.com.concepter.view;
 
+import br.com.concepter.model.beans.Entidade;
 import br.com.concepter.model.enuns.TipoAtributoEnum;
 import br.com.concepter.model.enuns.TipoEntidadeEnum;
 import br.com.concepter.model.enuns.TipoEspecializacaoEnum;
 import br.com.concepter.utils.FileUtils;
+import br.com.concepter.utils.XmlUtils;
 import com.mxgraph.util.mxCellRenderer;
 import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -395,6 +399,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jMenu1.add(jMenuItem4);
 
         jMenuItem5.setText("Salvar como ...");
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem5ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem5);
         jMenu1.add(jSeparator1);
 
@@ -529,8 +538,16 @@ public class TelaPrincipal extends javax.swing.JFrame {
         
         FileUtils fileUtils = new FileUtils();
         
+        XmlUtils xmlUtils = new XmlUtils();
+        
         if(jfc.showSaveDialog(jMenu1) == JFileChooser.APPROVE_OPTION){
-             fileUtils.saveGraph(areaGrafica.getAreaGrafico(), jfc.getSelectedFile().getPath());
+            fileUtils.saveGraph(areaGrafica.getAreaGrafico(), jfc.getSelectedFile().getPath());
+             
+            for (Integer key : areaGrafica.getMapaGraficoEntidades().keySet()) {
+                Entidade entidade = areaGrafica.getMapaGraficoEntidades().get(key);
+                xmlUtils.save(entidade);
+            } 
+            
         }
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
@@ -571,6 +588,10 @@ public class TelaPrincipal extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jMenuItem7ActionPerformed
+
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
 
  
     
